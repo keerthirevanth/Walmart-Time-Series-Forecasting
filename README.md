@@ -1,11 +1,17 @@
 # Retail Demand Forecasting on M5
 
-Hierarchical demand forecasting on the Walmart M5 dataset, built as a controlled
-benchmark: classical statistical baselines, a gradient-boosting model of the kind
-that won the original competition, and a modern time-series foundation model are
-all evaluated under the same rolling-origin backtest and the same official metric
-(WRMSSE). A natural-language insight layer sits on top of the forecasts to explain
-what the model predicts and why the prediction changed.
+End-to-end demand forecasting on the full Walmart M5 dataset (30,490 store-item
+series across three US states), built as a controlled benchmark under the
+competition's official metric. Classical statistical baselines, an Optuna-tuned
+LightGBM, and the Chronos time-series foundation model are all evaluated on the
+same rolling-origin backtest; a grounded LLM insight layer then turns the results
+into plain-language analysis.
+
+**Headline result:** the tuned LightGBM reaches a WRMSSE of 0.648, about 28%
+better than the strongest baseline, and is best on WRMSSE, MASE, and RMSE at once.
+Chronos, evaluated zero-shot, has the best per-series MASE yet the worst
+hierarchy-weighted WRMSSE - a scale-confirmed finding on the limits of zero-shot
+foundation models for intermittent, hierarchical demand.
 
 The aim is not a single leaderboard number but a defensible comparison: which
 class of model earns its cost, where in the product hierarchy each one wins or
