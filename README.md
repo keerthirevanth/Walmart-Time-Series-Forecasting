@@ -231,7 +231,9 @@ streamlit run app.py
 ```
 
 The app reads the exported artifacts under `reports/forecast/` and, for the
-history chart, the raw M5 files under `data/raw/`.
+history chart, the raw M5 files under `data/raw/`. It displays whatever scope
+those artifacts were exported at (for example the California subset for a quick
+local demo); the backtest results reported above cover the full M5 dataset.
 
 ## Tests
 

@@ -150,6 +150,13 @@ if forecast is None or series_ctx is None:
     )
     st.stop()
 
+_states = sorted(series_ctx["state_id"].dropna().unique())
+st.caption(
+    f"Loaded scope: {len(series_ctx):,} store-item series across "
+    f"{', '.join(_states)}. Reported backtest results in the README cover the full "
+    f"M5 dataset (all three states)."
+)
+
 f_cols = f_columns(forecast)
 
 # -- sidebar ----------------------------------------------------------------
