@@ -1,0 +1,6 @@
+# Dependencies for the LLM insight layer (Phase 5). Install whichever provider
+# you intend to use; the "echo" provider needs none of these.
+
+groq>=0.11              # Groq (OpenAI-compatible) free-tier models
+google-generativeai>=0.8  # Google Gemini
+python-dotenv>=1.0      # optional: load API keys from a local .env file

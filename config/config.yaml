@@ -1,0 +1,97 @@
+# Central configuration for the demand-forecasting pipeline.
+# Every experiment reads from this file so runs are reproducible and comparable.
+
+project:
+  name: m5-demand-forecasting
+  random_seed: 42
+
+data:
+  # Kaggle competition slug used by the download step.
+  kaggle_competition: m5-forecasting-accuracy
+  raw_dir: data/raw
+  interim_dir: data/interim
+  processed_dir: data/processed
+  # M5 calendar spans 1969 days; the public training file exposes 1941 (evaluation).
+  # The forecast horizon for the competition is the following 28 days.
+  horizon: 28
+  # Length of the validation window held out for backtesting (multiple of horizon).
+  n_backtest_windows: 3
+
+# Subsetting lets us iterate fast on a laptop and scale to the full set.
+# enabled: false runs on all 30,490 bottom-level series (all three states).
+# The filters below are ignored while enabled is false.
+subset:
+  enabled: false
+  states: [CA]          # options: CA, TX, WI (used only when enabled: true)
+  categories: null      # options: FOODS, HOBBIES, HOUSEHOLD
+  stores: null          # e.g. [CA_1]
+  # Optional random sample of items after the above filters are applied.
+  max_items: null
+
+features:
+  # Horizon-safe lags only: to forecast all 28 days at once without leakage a
+  # feature may use nothing newer than the cutoff, so the shortest usable lag is
+  # the horizon (28). lag_365 captures the yearly cycle. A recursive variant that
+  # exploits short lags (7, 14) is a planned comparison, not the default.
+  lags: [28, 365]
+  # Rolling statistics are computed on the sales series shifted by this base lag,
+  # which keeps them horizon-safe as well.
+  rolling_base_lag: 28
+  rolling_windows: [7, 14, 28, 56]
+  rolling_stats: [mean, std]
+  price_features: true
+  calendar_features: true
+  encode_events: true
+
+models:
+  baselines:
+    - naive
+    - seasonal_naive
+    - moving_average
+    - ets
+  lightgbm:
+    objective: tweedie
+    tweedie_variance_power: 1.1
+    metric: rmse
+    n_estimators: 2000
+    early_stopping_rounds: 100
+  optuna:
+    n_trials: 50
+    timeout_minutes: 120
+  foundation:
+    model_name: amazon/chronos-t5-small
+    context_length: 512
+    num_samples: 100
+
+evaluation:
+  primary_metric: wrmsse
+  secondary_metrics: [mase, rmse, pinball]
+  quantiles: [0.005, 0.025, 0.165, 0.25, 0.5, 0.75, 0.835, 0.975, 0.995]
+
+insight:
+  # provider: rotating tries each entry in `rotation` in order and falls back to
+  # the next whenever a call fails (rate limit, quota, transient error). Entries
+  # whose key_env is unset are skipped automatically, so only configure the keys
+  # you have. Keys live in environment variables, never in this file.
+  # Other modes: groq | gemini (single provider) | echo (offline, no key).
+  provider: rotating
+  rotation:
+    - {provider: groq,   model: llama-3.3-70b-versatile, key_env: GROQ_API_KEY}
+    - {provider: gemini, model: gemini-2.0-flash,        key_env: GEMINI_API_KEY}
+    - {provider: groq,   model: llama-3.1-8b-instant,    key_env: GROQ_API_KEY}
+    - {provider: gemini, model: gemini-1.5-flash,        key_env: GEMINI_API_KEY}
+    # Add more keys as extra env vars if you have several accounts, e.g.:
+    # - {provider: groq,   model: llama-3.3-70b-versatile, key_env: GROQ_API_KEY_2}
+    # - {provider: gemini, model: gemini-2.0-flash,        key_env: GEMINI_API_KEY_2}
+  # Single-provider fallbacks (used when provider is set to groq or gemini):
+  groq_model: llama-3.3-70b-versatile
+  gemini_model: gemini-2.0-flash
+  max_tokens: 1200
+  temperature: 0.2
+
+paths:
+  models_dir: models
+  reports_dir: reports
+  figures_dir: reports/figures
+  backtests_dir: reports/backtests
+  forecast_dir: reports/forecast

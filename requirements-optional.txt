@@ -1,0 +1,11 @@
+# Optional dependencies for the foundation-model benchmark and the LLM insight layer.
+# Install into a separate environment (ideally with a GPU) to avoid bloating the
+# core forecasting pipeline.
+
+# Time-series foundation model
+torch>=2.2
+chronos-forecasting>=1.2
+
+# LLM insight / explanation layer
+anthropic>=0.39
+python-dotenv>=1.0

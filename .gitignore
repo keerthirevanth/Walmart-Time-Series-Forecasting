@@ -1,0 +1,52 @@
+# Data
+data/raw/
+data/interim/
+data/processed/
+*.parquet
+*.feather
+
+# Models and artifacts
+models/*.pkl
+models/*.txt
+models/*.pt
+models/*.ckpt
+artifacts/
+
+# Reports: commit the illustrative EDA figures, but treat backtest CSVs and the
+# exported forecast as generated outputs (the README table is the source of
+# truth for results, and results depend on the configured data scope).
+reports/backtests/*.csv
+reports/forecast/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.ruff_cache/
+
+# Environments
+.venv/
+venv/
+env/
+.python-version
+
+# Notebooks scratch output
+notebooks/scratch/
+
+# Credentials
+.env
+.env.*
+*.env
+kaggle.json
+
+# Local archives / bundles
+*.zip
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
