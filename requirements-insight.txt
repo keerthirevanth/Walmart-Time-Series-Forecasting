@@ -4,3 +4,4 @@
 groq>=0.11              # Groq (OpenAI-compatible) free-tier models
 google-generativeai>=0.8  # Google Gemini
 python-dotenv>=1.0      # optional: load API keys from a local .env file
+streamlit>=1.57         # interactive dashboard (app.py)

@@ -215,6 +215,24 @@ python -m scripts.run_insight explain FOODS_3_090_CA_1_evaluation
 python -m scripts.run_insight summary --provider echo       # no key, prints the grounded prompt
 ```
 
+## Interactive app
+
+`app.py` is a Streamlit dashboard that ties the forecast and the analyst
+together. Pick a store-item from the cascading filters to see its recent sales
+history and 28-day forecast, then use the analyst tabs to generate a plain-language
+explanation of that forecast, ask grounded questions, or view the model
+leaderboard and executive summary. The provider selector switches between Groq,
+Gemini, the rotating fallback, and the offline echo mode.
+
+```bash
+pip install -r requirements-insight.txt
+# export the forecast artifacts first (see above), and set an API key in .env
+streamlit run app.py
+```
+
+The app reads the exported artifacts under `reports/forecast/` and, for the
+history chart, the raw M5 files under `data/raw/`.
+
 ## Tests
 
 ```bash
