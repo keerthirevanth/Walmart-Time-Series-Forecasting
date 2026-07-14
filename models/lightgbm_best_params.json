@@ -1,0 +1,15 @@
+{
+  "objective": "tweedie",
+  "tweedie_variance_power": 1.3008727995204246,
+  "metric": "rmse",
+  "learning_rate": 0.01316478276174207,
+  "num_leaves": 34,
+  "min_child_samples": 284,
+  "feature_fraction": 0.7628296300327484,
+  "bagging_fraction": 0.9767955304883521,
+  "bagging_freq": 1,
+  "lambda_l1": 0.05753772801304995,
+  "lambda_l2": 0.15523131060129064,
+  "verbosity": -1,
+  "n_jobs": -1
+}
