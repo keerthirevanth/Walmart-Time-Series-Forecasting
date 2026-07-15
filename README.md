@@ -7,11 +7,12 @@ LightGBM, and the Chronos time-series foundation model are all evaluated on the
 same rolling-origin backtest; a grounded LLM insight layer then turns the results
 into plain-language analysis.
 
-**Headline result:** the tuned LightGBM reaches a WRMSSE of 0.648, about 28%
-better than the strongest baseline, and is best on WRMSSE, MASE, and RMSE at once.
-Chronos, evaluated zero-shot, has the best per-series MASE yet the worst
-hierarchy-weighted WRMSSE - a scale-confirmed finding on the limits of zero-shot
-foundation models for intermittent, hierarchical demand.
+**Headline result:** a single global LightGBM (one model across all 30,490
+series) reaches a WRMSSE of 0.648, about 28% better than the strongest baseline,
+and is best on WRMSSE, MASE, and RMSE at once. On this benchmark, zero-shot
+Chronos produced strong per-series accuracy (best MASE) but poor hierarchy-weighted
+performance (worst WRMSSE), highlighting that foundation models may need adaptation
+or reconciliation for hierarchical retail forecasting.
 
 The aim is not a single leaderboard number but a defensible comparison: which
 class of model earns its cost, where in the product hierarchy each one wins or
@@ -47,9 +48,11 @@ motivates the modelling choices below.
    choices.
 3. **Baselines** - naive, seasonal naive, moving average, and exponential
    smoothing, so every learned model is measured against an honest floor.
-4. **Gradient boosting** - LightGBM with lag, rolling, calendar, and price
-   features and a Tweedie objective suited to intermittent counts;
-   hyperparameters tuned with Optuna.
+4. **Gradient boosting** - a single global LightGBM trained across all series (not
+   one model per series) with lag, rolling, calendar, and price features and a
+   Tweedie objective suited to intermittent counts; hyperparameters tuned with
+   Optuna. Training globally lets the model borrow strength across the many
+   sparse, intermittent series.
 5. **Foundation model** - Amazon Chronos-Bolt evaluated zero-shot (mean and
    median point forecasts), to measure what a pretrained time-series model buys
    over a task-specific one. Fine-tuning is noted as future work.
@@ -153,14 +156,16 @@ The cause is the hierarchy. WRMSSE aggregates forecasts up 12 levels and weights
 them by dollar sales; the top levels are smooth, high-volume series whose scaled
 error denominators are small. Small, same-direction biases across the 30,490
 bottom series do not cancel when summed, so they surface as large errors at the
-aggregate levels that WRMSSE weights most heavily. A model tuned for this data
-with a Tweedie mean objective (LightGBM) preserves those aggregates; a general
-pretrained model scored per series does not.
+aggregate levels that WRMSSE weights most heavily. In this experiment, the global
+LightGBM - optimised directly for this data with a Tweedie mean objective -
+achieved substantially better hierarchy-aware accuracy than the zero-shot
+pretrained model evaluated per series.
 
 The takeaway is not that foundation models are bad, but that headline per-series
 accuracy can hide poor hierarchical coherence, and the choice of metric decides
-the winner. Fine-tuning Chronos on M5 and forecast reconciliation across the
-hierarchy are the natural next steps and are left as future work.
+the winner. Fine-tuning Chronos on M5 (rather than the zero-shot setting used
+here) and forecast reconciliation across the hierarchy are the natural next steps
+and are left as future work.
 
 ### Backtest design and its validation
 
