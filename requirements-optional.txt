@@ -5,7 +5,3 @@
 # Time-series foundation model
 torch>=2.2
 chronos-forecasting>=1.2
-
-# LLM insight / explanation layer
-anthropic>=0.39
-python-dotenv>=1.0

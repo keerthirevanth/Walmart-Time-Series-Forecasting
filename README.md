@@ -1,4 +1,4 @@
-# Retail Demand Forecasting on M5
+# Large-Scale Retail Demand Forecasting with Gradient-Boosted Models
 
 End-to-end demand forecasting on the full Walmart M5 dataset (30,490 store-item
 series across three US states), built as a controlled benchmark under the
